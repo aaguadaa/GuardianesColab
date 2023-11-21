@@ -1,12 +1,12 @@
 // Clase Player1 para el jugador que usa las flechas
 class Player1 extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y) {
-        super(scene, x, y, 'player'); // Llama al constructor de la clase base (Phaser.Physics.Arcade.Sprite)
-        scene.add.existing(this); // Añade al jugador a la escena
-        scene.physics.add.existing(this); // Añade al jugador al sistema de física de la escena
-        this.setBounce(0.2); // Establece el rebote del jugador al colisionar
-        this.setCollideWorldBounds(true); // Hace que el jugador colisione con los límites del mundo
-        this.cursors = scene.input.keyboard.createCursorKeys(); // Configura las teclas de flechas para el control
+    constructor(scene, x, y, imageKey) {
+        super(scene, x, y, imageKey); // Ahora el constructor acepta un parámetro para la imagen
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.setBounce(0.2);
+        this.setCollideWorldBounds(true);
+        this.cursors = scene.input.keyboard.createCursorKeys(); // Configura las teclas de flecha
         this.actionKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER); // Configura la tecla de acción (ENTER)
     }
 

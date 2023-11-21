@@ -1,12 +1,13 @@
 // Tree.js
-class Tree {
+class Tree extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, type) {
-        this.scene = scene;
-        this.type = type; // Puede ser 'normal' o 'indestructible'
-        this.health = 3; // Vida inicial del árbol
-        this.sprite = scene.physics.add.sprite(x, y, `tree_${type}`); // Puedes tener imágenes distintas para cada tipo
+        super(scene, x, y, `tree_${type}`);
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+        this.type = type;
+        this.health = 3;
     }
-    /*
+
     update() {
         // Lógica de actualización del árbol
         if (this.health <= 0) {
@@ -23,7 +24,7 @@ class Tree {
     takeDamage() {
         // Lógica para hacer que el árbol tome daño
         this.health--;
-    }*/
+    }
 }
 
 export default Tree;
