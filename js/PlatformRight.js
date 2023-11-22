@@ -12,6 +12,7 @@ class PlatformRight extends Phaser.Physics.Arcade.Sprite {
         // Configuración de las propiedades de la plataforma
         this.setImmovable(true); // Hace que la plataforma no se mueva al colisionar
         this.body.allowGravity = false; // Evita que la plataforma sea afectada por la gravedad
+        this.body.gravity.y = 0; // Establece la gravedad en cero para la plataforma
         this.body.checkCollision.none = true; // Evita colisiones con otros objetos
 
         // Configuración del suelo de la plataforma
@@ -37,9 +38,11 @@ class PlatformRight extends Phaser.Physics.Arcade.Sprite {
 
     // Método para manejar la interacción con los jugadores
     handlePlayerInteraction(player) {
-        if (player.body.touching.down && !player.body.blocked.up) {
-            player.setVelocityX(0);
+        if (player.body.touching.down) {
+            player.setVelocityY(0); // Detener la velocidad en el eje Y
             player.setY(this.suelo.getChildren()[0].y - this.height - player.height / 2);
         }
     }
 }
+
+// ... (resto del código, si lo hubiera)
