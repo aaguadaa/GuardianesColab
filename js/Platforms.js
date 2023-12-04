@@ -1,6 +1,6 @@
-// Clase PlatformRight
-class PlatformRight extends Phaser.Physics.Arcade.Sprite {
-    // Constructor de la clase PlatformRight
+// Clase Platforms
+class Platforms extends Phaser.Physics.Arcade.Sprite {
+    // Constructor de la clase Platforms
     constructor(scene, x, y, key) {
         // Llama al constructor de la clase base (Phaser.Physics.Arcade.Sprite)
         super(scene, x, y, key);
@@ -44,5 +44,3 @@ class PlatformRight extends Phaser.Physics.Arcade.Sprite {
         }
     }
 }
-
-// ... (resto del código, si lo hubiera)

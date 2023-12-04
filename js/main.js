@@ -1,87 +1,107 @@
 // Configuración del juego
 let config = {
-    type: Phaser.AUTO, // Tipo de renderizado automático por Phaser
-    width: 800, // Ancho de la ventana del juego
-    height: 600, // Altura de la ventana del juego
+    type: Phaser.AUTO,
+    width: 800,
+    height: 600,
     physics: {
-        default: 'arcade', // Motor de físicas utilizado (Arcade en este caso)
+        default: 'arcade',
         arcade: {
-            gravity: { y: 300 }, // Configura la gravedad en el eje Y
-            debug: false // Desactiva la visualización de información de depuración
+            gravity: { y: 300 },
+            debug: false
         }
     },
     scene: {
-        preload: preload, // Función de precarga
-        create: create, // Función de creación
-        update: update // Función de actualización
+        preload: preload,
+        create: create,
+        update: update
     },
-    backgroundColor: '#87CEEB' // Establece el color de fondo
 };
 
 let game = new Phaser.Game(config);
 
+// Declara la variable platforms fuera de la función create
+let platforms;
+
 function preload() {
-    // Cargar imagen del fondo
+    // Cargar imágenes y sprites necesarios
+    this.load.image('sky', 'assets/sprites/sky.png');
+    this.load.image('cloudMini', 'assets/sprites/cloudMini.png');
+    this.load.image('cloudMedium', 'assets/sprites/cloudMedium.png');
+    this.load.image('sun', 'assets/sprites/sun.png');
     this.load.image('background', 'assets/sprites/background.png');
-    // Carga la imagen del jugador
-    this.load.image('player1', 'assets/sprites/Player1.png');
-    this.load.image('player2', 'assets/sprites/Player2.png');
-    // Carga la imagen del enemigo
+    this.load.image('player1', 'assets/sprites/Player1.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.image('player2', 'assets/sprites/Player2.png', { frameWidth: 32, frameHeight: 48 });
     this.load.image('enemy', 'assets/sprites/enemy.png');
-    // Carga la imagen del árbol
     this.load.image('tree_normal', 'assets/sprites/tree_normal.png');
-    // Carga la imagen de la plataforma
     this.load.image('platform', 'assets/sprites/Platform.png');
 }
 
 function create() {
-    // Agrega el fondo
+    // Agregar imágenes al juego
+    this.add.image(0, 0, 'sky').setOrigin(0, 0).setScale(2);
     this.add.image(0, 243, 'background').setOrigin(0, 0).setScale(2);
+    this.add.image(750, -9, 'cloudMini').setOrigin(0, 0).setScale(2);
+    this.add.image(570, 50, 'cloudMini').setOrigin(0, 0).setScale(2);
+    this.add.image(620, 250, 'cloudMini').setOrigin(0, 0).setScale(2);
+    this.add.image(500, 150, 'cloudMini').setOrigin(0, 0).setScale(2);
+    this.add.image(100, 80, 'cloudMedium').setOrigin(0, 0).setScale(2);
+    this.add.image(300, -10, 'cloudMedium').setOrigin(0, 0).setScale(2);
+    this.add.image(-40, -40, 'cloudMedium').setOrigin(0, 0).setScale(2);
+    this.add.image(650, 50, 'sun').setOrigin(0, 0).setScale(2);
 
     // Crear grupo para los árboles
-    this.treesGroup = this.physics.add.group(); // Crea un grupo para los árboles en la escena
+    this.treesGroup = this.physics.add.group();
 
     // Crear jugadores
-    this.player1 = new Player1(this, 100, 450, 'player1'); // Crea el jugador 1 en la posición especificada
-    this.player2 = new Player2(this, 200, 450, 'player2'); // Crea el jugador 2 en la posición especificada
+    this.player1 = new Player1(this, 0, 400, 'player1');
+    this.player2 = new Player2(this, 0, 400, 'player2');
 
     // Crear enemigo
-    this.enemy = new Enemy(this, 400, 300, 'enemy'); // Ajusta la posición y el nombre del activo según tu configuración
+    this.enemy = new Enemy(this, 0, 600, 'enemy');
 
-    // Crear plataforma derecha
-    this.platformRight = new PlatformRight(this, 766, 450, 'platform'); // Crea la plataforma en la posición especificada
-
-    // Crear suelo invisible debajo de la plataforma derecha
-    const ground = this.physics.add.staticGroup(); // Crea un grupo estático para el suelo
-    ground.create(766, 450, 'platform').setScale(2).refreshBody();  // Ajusta la escala del suelo según sea necesario
+    // Crear plataformas
+    platforms = [
+        new Platforms(this, 766, 450, 'platform'),
+        new Platforms(this, 50, 450, 'platform'),
+        new Platforms(this, 250, 350, 'platform'),
+        new Platforms(this, 650, 350, 'platform'),
+        new Platforms(this, 100, 250, 'platform'),
+        new Platforms(this, 450, 250, 'platform')
+    ];
 
     // Lógica para crear 10 árboles al comienzo del juego
     for (let i = 0; i < 10; i++) {
-        let x = Phaser.Math.Between(0, game.config.width); // Genera una posición X aleatoria
-        let y = game.config.height - 16; // Calcula la posición Y para colocar el árbol en la parte superior de la pantalla
-        // Agregar árboles directamente al grupo
-        let tree = this.treesGroup.create(x, y, 'tree_normal'); // Crea un árbol en la posición especificada
-        tree.setBounce(0.2); // Establece el rebote del árbol
-        tree.setCollideWorldBounds(true); // Hace que el árbol colisione con los límites del mundo
-        tree.setInteractive(); // Habilita la interacción con el árbol
+        let x = Phaser.Math.Between(0, game.config.width);
+        let y = game.config.height - 16;
+        let tree = this.treesGroup.create(x, y, 'tree_normal');
+        tree.setBounce(0.2);
+        tree.setCollideWorldBounds(true);
+        tree.setInteractive();
     }
+    
+    // Habilita colisiones entre jugadores y plataformas
+    this.physics.add.collider([this.player1, this.player2], platforms);
 }
 
 function update() {
     // Lógica de actualización del juego
-    this.player1.update(); // Actualiza el jugador 1
-    this.player2.update(); // Actualiza el jugador 2
+    this.player1.update();
+    this.player2.update();
 
-    // Lógica de actualización de los árboles
     this.treesGroup.children.iterate((tree) => {
-        tree.update(); // Actualiza cada árbol en el grupo
+        tree.update();
     });
 
-    // Lógica de actualización del enemigo
-    this.enemy.update(); // Actualiza el enemigo
+    this.enemy.update();
 
-    // Verificar si Player1 está en la plataforma
-    if (this.physics.world.overlap(this.player1, this.platformRight.suelo)) {
-        this.platformRight.handlePlayerInteraction(this.player1); // Maneja la interacción del jugador 1 con la plataforma
+    // Verificar colisiones con las plataformas
+    for (const platform of platforms) {
+        if (this.physics.world.overlap(this.player1, platform.suelo)) {
+            platform.handlePlayerInteraction(this.player1);
+        }
+
+        if (this.physics.world.overlap(this.player2, platform.suelo)) {
+            platform.handlePlayerInteraction(this.player2);
+        }
     }
 }

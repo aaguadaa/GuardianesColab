@@ -1,23 +1,11 @@
 // Clase Player2 para el jugador que usa las teclas A, D, W
 class Player2 extends Phaser.Physics.Arcade.Sprite {
-    // Constructor de la clase con parámetros: scene (escena), x (posición x), y (posición y), imageKey (clave de la imagen)
     constructor(scene, x, y, imageKey) {
-        // Llama al constructor de la clase padre (Phaser.Physics.Arcade.Sprite) con los parámetros proporcionados
         super(scene, x, y, imageKey);
-
-        // Agrega la instancia del jugador a la escena
         scene.add.existing(this);
-
-        // Habilita la física para la instancia del jugador y la agrega al sistema de física de la escena
         scene.physics.add.existing(this);
-
-        // Establece el rebote del jugador
         this.setBounce(0.2);
-
-        // Hace que el jugador colisione con los límites del mundo
         this.setCollideWorldBounds(true);
-
-        // Crea el objeto 'cursors' para manejar las teclas de movimiento
         this.cursors = {
             left: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
             right: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
@@ -25,11 +13,11 @@ class Player2 extends Phaser.Physics.Arcade.Sprite {
             down: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         };
 
-        // Crea el objeto 'actionKey' para manejar la tecla de acción (espacio en este caso)
         this.actionKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.jumpVelocity = -330;
     }
 
-    // Método de actualización que se llama en cada fotograma
     update() {
         this.handleMovement(); // Maneja el movimiento del jugador
         this.checkTreeInteraction(); // Verifica la interacción del jugador con los árboles
