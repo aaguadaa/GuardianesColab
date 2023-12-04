@@ -10,6 +10,7 @@ let config = {
             debug: false
         }
     },
+    lives: 3,
     scene: {
         preload: preload,
         create: create,
@@ -81,6 +82,9 @@ function create() {
     
     // Habilita colisiones entre jugadores y plataformas
     this.physics.add.collider([this.player1, this.player2], platforms);
+
+    // Agrega un texto para mostrar las vidas en la esquina superior izquierda
+    this.livesText = this.add.text(16, 16, 'Vidas: ' + config.lives, { fontSize: '32px', fill: '#ff0000', fontWeight: 'bold' });
 }
 
 function update() {
@@ -102,6 +106,29 @@ function update() {
 
         if (this.physics.world.overlap(this.player2, platform.suelo)) {
             platform.handlePlayerInteraction(this.player2);
+        }
+    }
+
+    // Reducir una vida si un jugador colisiona con el enemigo
+    if (this.physics.world.overlap(this.player1, this.enemy)) {
+        config.lives -= 1;
+        this.livesText.setText('Vidas: ' + config.lives);
+
+        this.player1.setPosition(0, 400);
+
+        if (config.lives === 0) {
+            this.scene.restart();
+        }
+    }
+    
+    if (this.physics.world.overlap(this.player2, this.enemy)) {
+        config.lives -= 1;
+        this.livesText.setText('Vidas: ' + config.lives);
+    
+        this.player2.setPosition(200, 400);
+        
+        if (config.lives === 0) {
+            this.scene.restart();
         }
     }
 }
